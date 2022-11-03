@@ -1,41 +1,136 @@
+//! I2C Display example
+//!
+//! This example prints some text on an SSD1306-based
+//! display (via I2C)
+//!
+//! The following wiring is assumed:
+//! - SDA => GPIO1
+//! - SCL => GPIO2
+
 #![no_std]
 #![no_main]
 
-extern crate alloc;
-use esp32c3_hal::{clock::ClockControl, pac::Peripherals, prelude::*, timer::TimerGroup, Rtc};
+use embedded_graphics::{
+    mono_font::{
+        ascii::{FONT_6X10, FONT_9X18_BOLD},
+        MonoTextStyleBuilder,
+    },
+    pixelcolor::BinaryColor,
+    prelude::*,
+    text::{Alignment, Text},
+};
+use esp32c3_hal::{
+    clock::ClockControl, gpio::IO, i2c::I2C, pac::Peripherals, prelude::*, timer::TimerGroup,
+    Delay, Rtc,
+};
 use esp_backtrace as _;
-#[global_allocator]
-static ALLOCATOR: esp_alloc::EspHeap = esp_alloc::EspHeap::empty();
+use nb::block;
+use riscv_rt::entry;
+use ssd1306::{prelude::*, I2CDisplayInterface, Ssd1306};
 
-fn init_heap() {
-    const HEAP_SIZE: usize = 32 * 1024;
-
-    extern "C" {
-        static mut _heap_start: u32;
-    }
-
-    unsafe {
-        let heap_start = &_heap_start as *const _ as usize;
-        ALLOCATOR.init(heap_start as *mut u8, HEAP_SIZE);
-    }
-}
-#[riscv_rt::entry]
+#[entry]
 fn main() -> ! {
     let peripherals = Peripherals::take().unwrap();
-    let system = peripherals.SYSTEM.split();
+    let mut system = peripherals.SYSTEM.split();
     let clocks = ClockControl::boot_defaults(system.clock_control).freeze();
 
-    // Disable the RTC and TIMG watchdog timers
     let mut rtc = Rtc::new(peripherals.RTC_CNTL);
     let timer_group0 = TimerGroup::new(peripherals.TIMG0, &clocks);
+    let mut timer0 = timer_group0.timer0;
     let mut wdt0 = timer_group0.wdt;
     let timer_group1 = TimerGroup::new(peripherals.TIMG1, &clocks);
     let mut wdt1 = timer_group1.wdt;
 
+    // Disable watchdog timers
     rtc.swd.disable();
     rtc.rwdt.disable();
     wdt0.disable();
     wdt1.disable();
 
-    loop {}
+    let io = IO::new(peripherals.GPIO, peripherals.IO_MUX);
+
+    // Create a new peripheral object with the described wiring
+    // and standard I2C clock speed
+    let i2c = I2C::new(
+        peripherals.I2C0,
+        io.pins.gpio5,
+        io.pins.gpio4,
+        100u32.kHz(),
+        &mut system.peripheral_clock_control,
+        &clocks,
+    )
+    .unwrap();
+
+    // Start timer (5 second interval)
+    timer0.start(5u64.secs());
+
+    // Initialize display
+    let interface = I2CDisplayInterface::new(i2c);
+    let mut display = Ssd1306::new(interface, DisplaySize128x64, DisplayRotation::Rotate0)
+        .into_buffered_graphics_mode();
+    display.init().unwrap();
+
+    // Specify different text styles
+    let text_style = MonoTextStyleBuilder::new()
+        .font(&FONT_6X10)
+        .text_color(BinaryColor::On)
+        .build();
+    let text_style_big = MonoTextStyleBuilder::new()
+        .font(&FONT_9X18_BOLD)
+        .text_color(BinaryColor::On)
+        .build();
+
+    let mut delay = Delay::new(&clocks);
+
+    loop {
+        // Fill display bufffer with a centered text with two lines (and two text
+        // styles)
+        Text::with_alignment(
+            "esp-hal",
+            display.bounding_box().center() + Point::new(0, 0),
+            text_style_big,
+            Alignment::Center,
+        )
+        .draw(&mut display)
+        .unwrap();
+
+        Text::with_alignment(
+            "Chip: ESP32-C3",
+            display.bounding_box().center() + Point::new(0, 14),
+            text_style,
+            Alignment::Center,
+        )
+        .draw(&mut display)
+        .unwrap();
+
+        // Write buffer to display
+        display.flush().unwrap();
+        esp_println::println!("11");
+        // Clear display buffer
+        display.clear();
+
+        // Wait 5 seconds
+        delay.delay_ms(1000u32);
+        // block!(timer0.wait()).unwrap();
+        esp_println::println!("5 scend");
+
+        // Write single-line centered text "Hello World" to buffer
+        Text::with_alignment(
+            "Hello World!",
+            display.bounding_box().center(),
+            text_style_big,
+            Alignment::Center,
+        )
+        .draw(&mut display)
+        .unwrap();
+
+        // Write buffer to display
+        display.flush().unwrap();
+        // Clear display buffer
+        display.clear();
+
+        // Wait 5 seconds
+        delay.delay_ms(1000u32);
+        // block!(timer0.wait()).unwrap();
+    }
 }

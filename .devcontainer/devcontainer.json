@@ -7,7 +7,9 @@
     "args": {
       "CONTAINER_USER": "esp",
       "CONTAINER_GROUP": "esp",
-      "ESP_BOARD": "esp32c3"
+      "ESP_BOARD": "esp32c3",
+      "HTTP_PROXY": "http://192.168.0.200:7890",
+      "HTTPS_PROXY": "http://192.168.0.200:7890"
     }
   },
   "settings": {

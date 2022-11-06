@@ -9,6 +9,12 @@
 
 #![no_std]
 #![no_main]
+#![feature(default_alloc_error_handler)]
+
+#[global_allocator]
+static ALLOCATOR: esp_alloc::EspHeap = esp_alloc::EspHeap::empty();
+
+use core::cell::RefMut;
 
 use embedded_graphics::{
     mono_font::{
@@ -20,16 +26,25 @@ use embedded_graphics::{
     text::{Alignment, Text},
 };
 use esp32c3_hal::{
-    clock::ClockControl, gpio::IO, i2c::I2C, pac::Peripherals, prelude::*, timer::TimerGroup,
+    clock::ClockControl,
+    gpio::IO,
+    i2c::I2C,
+    pac::{Peripherals, I2C0},
+    prelude::*,
+    timer::TimerGroup,
     Delay, Rtc,
 };
 use esp_backtrace as _;
 use nb::block;
 use riscv_rt::entry;
-use ssd1306::{prelude::*, I2CDisplayInterface, Ssd1306};
+use ssd1306::{mode::BufferedGraphicsMode, prelude::*, I2CDisplayInterface, Ssd1306};
 
 #[entry]
 fn main() -> ! {
+    const HEAP_SIZE: usize = 65535;
+    static mut HEAP: [u8; HEAP_SIZE] = [0; HEAP_SIZE];
+    unsafe { ALLOCATOR.init(HEAP.as_mut_ptr(), HEAP_SIZE) }
+
     let peripherals = Peripherals::take().unwrap();
     let mut system = peripherals.SYSTEM.split();
     let clocks = ClockControl::boot_defaults(system.clock_control).freeze();

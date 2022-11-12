@@ -6,15 +6,19 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-esp32c3-hal = "0.2.0"
+# esp32c3-hal = "0.2"
+esp32c3-hal = {git ="https://github.com/esp-rs/esp-hal/tree/main/esp32c3-hal"}
 esp-alloc = { version = "0.1.0", features = ["oom-handler"] }
 esp-backtrace = { version = "0.3.0", features = ["esp32c3", "panic-handler", "print-uart"] }
-riscv-rt = { version = "0.9", optional = true }
+riscv-rt = { version = "0.10", optional = true }
 esp-println = { version = "0.3.1", features = ["esp32c3"] }
 embedded-graphics = "0.7"
 ssd1306 = "0.7"
 
 no-std-compat = "0.4.1"
+
+embedded-hal-async = { version = "0.1.0-alpha.3", optional = true } 
+embassy-time       = { version = "0.1.0", features = ["nightly"], optional = true }
 
 [features]
 default = ["rt"]

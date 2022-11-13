@@ -20,4 +20,4 @@ esac
 
 export ESP_ARCH=riscv32imac-unknown-none-elf
 
-web-flash --chip esp32c3 target/${ESP_ARCH}/${BUILD_MODE}/esp32c3
+web-flash --chip esp32c3 target/${ESP_ARCH}/${BUILD_MODE}/wifi

@@ -13,10 +13,10 @@ fi
 
 case "$1" in
 "" | "release")
-    cargo build --bin snake --release
+    cargo build --bin wifi --release
     ;;
 "debug")
-    cargo build --bin snake
+    cargo build --bin wifi
     ;;
 *)
     echo "Wrong argument. Only \"debug\"/\"release\" arguments are supported"

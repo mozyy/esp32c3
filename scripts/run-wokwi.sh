@@ -29,9 +29,9 @@ fi
 export ESP_ARCH=riscv32imac-unknown-none-elf
 
 # TODO: Update with your Wokwi Project
-export WOKWI_PROJECT_ID="345825844119208530"
+export WOKWI_PROJECT_ID="347318324077527635"
 if [ "${WOKWI_PROJECT_ID}" == "" ]; then
-    wokwi-server --chip esp32c3 target/${ESP_ARCH}/${BUILD_MODE}/esp32c3
+    wokwi-server --chip esp32c3 target/${ESP_ARCH}/${BUILD_MODE}/wifi
 else
-    wokwi-server --chip esp32c3 --id 347375639820501588 target/${ESP_ARCH}/${BUILD_MODE}/esp32c3
+    wokwi-server --chip esp32c3 --id ${WOKWI_PROJECT_ID} target/${ESP_ARCH}/${BUILD_MODE}/wifi
 fi

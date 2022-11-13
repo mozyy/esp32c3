@@ -12,6 +12,10 @@
       "HTTPS_PROXY": "http://192.168.0.200:7890"
     }
   },
+  "remoteEnv": {
+    "http_proxy": "http://192.168.0.200:7890",
+    "https_proxy": "http://192.168.0.200:7890"
+  },
   "settings": {
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,

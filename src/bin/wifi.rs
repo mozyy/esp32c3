@@ -10,13 +10,6 @@
 // #[global_allocator]
 // static ALLOCATOR: esp_alloc::EspHeap = esp_alloc::EspHeap::empty();
 
-use bleps::{
-    ad_structure::{
-        create_advertising_data, AdStructure, BR_EDR_NOT_SUPPORTED, LE_GENERAL_DISCOVERABLE,
-    },
-    att::Uuid,
-    Ble, HciConnector,
-};
 use embedded_svc::{
     io::{Read, Write},
     wifi::{
@@ -25,13 +18,14 @@ use embedded_svc::{
     },
 };
 use esp32c3_hal::{
-    clock::ClockControl, pac::Peripherals, prelude::*, timer::TimerGroup, Rtc, Serial,
+    clock::ClockControl, pac::Peripherals, prelude::*, systimer::SystemTimer, timer::TimerGroup,
+    Rtc, Serial,
 };
 use esp_backtrace as _;
 use esp_println::{logger::init_logger, print, println};
 use esp_wifi::{
     ble::controller::BleConnector,
-    create_network_stack_storage, current_millis, network_stack_storage,
+    create_network_stack_storage, current_millis, initialize, network_stack_storage,
     wifi::utils::create_network_interface,
     wifi_interface::{timestamp, Network, WifiError},
 };
@@ -69,17 +63,9 @@ fn main() -> ! {
     let ethernet = create_network_interface(network_stack_storage!(storage));
     let mut wifi_interface = esp_wifi::wifi_interface::Wifi::new(ethernet);
 
-    #[cfg(feature = "esp32c3")]
     {
-        use hal::systimer::SystemTimer;
         let syst = SystemTimer::new(peripherals.SYSTIMER);
         initialize(syst.alarm0, peripherals.RNG, &clocks).unwrap();
-    }
-    #[cfg(feature = "esp32")]
-    {
-        use hal::timer::TimerGroup;
-        let timg1 = TimerGroup::new(peripherals.TIMG1, &clocks);
-        initialize(timg1.timer0, peripherals.RNG, &clocks).unwrap();
     }
 
     println!("{:?}", wifi_interface.get_status());
@@ -136,23 +122,6 @@ fn main() -> ! {
     }
 
     let connector = BleConnector {};
-    let hci = HciConnector::new(connector, esp_wifi::current_millis);
-    let mut ble = Ble::new(&hci);
-
-    println!("{:?}", ble.init());
-    println!("{:?}", ble.cmd_set_le_advertising_parameters());
-    println!(
-        "{:?}",
-        ble.cmd_set_le_advertising_data(create_advertising_data(&[
-            AdStructure::Flags(LE_GENERAL_DISCOVERABLE | BR_EDR_NOT_SUPPORTED),
-            AdStructure::ServiceUuids16(&[Uuid::Uuid16(0x1809)]),
-            #[cfg(feature = "esp32c3")]
-            AdStructure::CompleteLocalName("ESP32-C3 BLE"),
-            #[cfg(feature = "esp32")]
-            AdStructure::CompleteLocalName("ESP32 BLE"),
-        ]))
-    );
-    println!("{:?}", ble.cmd_set_le_advertise_enable(true));
 
     println!("started advertising");
 

@@ -81,27 +81,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
-name = "bleps"
-version = "0.1.0"
-source = "git+https://github.com/bjoernQ/bleps#06e1f7b3810b7271d1004635842b691adaea4818"
-dependencies = [
- "embedded-io",
- "log",
-]
-
-[[package]]
-name = "bleps-macros"
-version = "0.1.0"
-source = "git+https://github.com/bjoernQ/bleps#06e1f7b3810b7271d1004635842b691adaea4818"
-dependencies = [
- "litrs",
- "proc-macro2",
- "quote",
- "syn",
- "uuid",
-]
-
-[[package]]
 name = "byte-slice-cast"
 version = "0.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -466,18 +445,13 @@ dependencies = [
 name = "esp32c3"
 version = "0.1.0"
 dependencies = [
- "bleps",
- "bleps-macros",
  "embedded-graphics",
  "embedded-hal 0.2.7",
- "embedded-io",
  "embedded-svc",
- "enumset",
  "esp-alloc",
  "esp-backtrace",
  "esp-println",
  "esp-wifi",
- "esp32-hal",
  "esp32c3-hal",
  "heapless",
  "lcd1602-rs",
@@ -485,7 +459,6 @@ dependencies = [
  "no-std-compat",
  "riscv 0.10.0",
  "riscv-rt 0.10.0",
- "riscv-target",
  "smoltcp",
  "ssd1306",
  "void",
@@ -605,15 +578,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e322f259d225fbae43a1b053b2dc6a5968a6bdf8b205f5de684dab485b95030e"
 dependencies = [
  "spinning_top",
-]
-
-[[package]]
-name = "litrs"
-version = "0.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9275e0933cf8bb20f008924c0cb07a0692fe54d8064996520bf998de9eb79aa"
-dependencies = [
- "proc-macro2",
 ]
 
 [[package]]
@@ -1035,12 +999,6 @@ name = "unicode-ident"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6ceab39d59e4c9499d4e5a8ee0e2735b891bb7308ac83dfb4e80cad195c9f6f3"
-
-[[package]]
-name = "uuid"
-version = "1.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "feb41e78f93363bb2df8b0e86a2ca30eed7806ea16ea0c790d757cf93f79be83"
 
 [[package]]
 name = "vcell"

@@ -18,7 +18,11 @@ use embedded_svc::{
     },
 };
 use esp32c3_hal::{
-    clock::ClockControl, pac::Peripherals, prelude::*, systimer::SystemTimer, timer::TimerGroup,
+    clock::{ClockControl, CpuClock},
+    pac::Peripherals,
+    prelude::*,
+    systimer::SystemTimer,
+    timer::TimerGroup,
     Rtc, Serial,
 };
 use esp_backtrace as _;
@@ -43,7 +47,8 @@ fn main() -> ! {
 
     let peripherals = Peripherals::take().unwrap();
     let system = peripherals.SYSTEM.split();
-    let clocks = ClockControl::boot_defaults(system.clock_control).freeze();
+    let clocks = ClockControl::configure(system.clock_control, CpuClock::Clock160MHz).freeze();
+    // let clocks = ClockControl::boot_defaults(system.clock_control).freeze();
 
     let mut rtc = Rtc::new(peripherals.RTC_CNTL);
     let mut serial0 = Serial::new(peripherals.UART0);

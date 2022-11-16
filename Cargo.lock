@@ -204,6 +204,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "embedded-dma"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "994f7e5b5cb23521c22304927195f236813053eb9c065dd2226a32ba64695446"
+dependencies = [
+ "stable_deref_trait",
+]
+
+[[package]]
 name = "embedded-graphics"
 version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -342,17 +351,18 @@ dependencies = [
 [[package]]
 name = "esp-hal-common"
 version = "0.2.0"
-source = "git+https://github.com/esp-rs/esp-hal/?rev=af745ac7b0799752260e13573895b97153d85639#af745ac7b0799752260e13573895b97153d85639"
+source = "git+https://github.com/esp-rs/esp-hal/#9b3e644e309e0ab3332fd007f4ac2fb4881abc4c"
 dependencies = [
  "cfg-if",
  "critical-section 1.1.1",
+ "embedded-dma",
  "embedded-hal 0.2.7",
- "esp-hal-procmacros 0.1.0 (git+https://github.com/esp-rs/esp-hal/?rev=af745ac7b0799752260e13573895b97153d85639)",
- "esp32c3 0.5.1",
+ "esp-hal-procmacros 0.1.0 (git+https://github.com/esp-rs/esp-hal/)",
+ "esp32c3 0.8.0",
  "fugit",
  "nb 1.0.0",
  "paste",
- "riscv 0.8.0",
+ "riscv 0.9.0",
  "riscv-atomic-emulation-trap",
  "void",
 ]
@@ -373,7 +383,7 @@ dependencies = [
 [[package]]
 name = "esp-hal-procmacros"
 version = "0.1.0"
-source = "git+https://github.com/esp-rs/esp-hal/?rev=af745ac7b0799752260e13573895b97153d85639#af745ac7b0799752260e13573895b97153d85639"
+source = "git+https://github.com/esp-rs/esp-hal/#9b3e644e309e0ab3332fd007f4ac2fb4881abc4c"
 dependencies = [
  "darling",
  "proc-macro-error",
@@ -394,7 +404,6 @@ dependencies = [
 [[package]]
 name = "esp-wifi"
 version = "0.1.0"
-source = "git+https://github.com/esp-rs/esp-wifi#7adb165866ea80dc3a31c40196427f120e7a9765"
 dependencies = [
  "atomic-polyfill 1.0.1",
  "critical-section 1.1.1",
@@ -466,25 +475,26 @@ dependencies = [
 
 [[package]]
 name = "esp32c3"
-version = "0.5.1"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cc0e61897c90cfc713243af3d7fab2a7615669faf1652bd3718a1172012b1a02"
+checksum = "bdcc9eff68841274cad143f5bb25b1a56e5f90323f82da4df5cf9081bb46eb7c"
 dependencies = [
- "bare-metal 1.0.0",
- "riscv 0.8.0",
- "riscv-rt 0.9.0",
+ "critical-section 1.1.1",
+ "riscv 0.9.0",
+ "riscv-rt 0.10.0",
  "vcell",
 ]
 
 [[package]]
 name = "esp32c3-hal"
 version = "0.2.0"
-source = "git+https://github.com/esp-rs/esp-hal/?rev=af745ac7b0799752260e13573895b97153d85639#af745ac7b0799752260e13573895b97153d85639"
+source = "git+https://github.com/esp-rs/esp-hal/#9b3e644e309e0ab3332fd007f4ac2fb4881abc4c"
 dependencies = [
+ "cfg-if",
  "embedded-hal 0.2.7",
- "esp-hal-common 0.2.0 (git+https://github.com/esp-rs/esp-hal/?rev=af745ac7b0799752260e13573895b97153d85639)",
+ "esp-hal-common 0.2.0 (git+https://github.com/esp-rs/esp-hal/)",
  "r0",
- "riscv 0.8.0",
+ "riscv 0.9.0",
  "riscv-rt 0.9.0",
 ]
 

@@ -86,8 +86,8 @@ fn main() -> ! {
 
     println!("Call wifi_connect");
     let client_config = Configuration::Client(ClientConfiguration {
-        ssid: "x".into(),
-        password: "PASSWORD".into(),
+        ssid: "MERCURY_F212".into(),
+        password: "xjx123456".into(),
         // auth_method: AuthMethod::None,
         ..Default::default()
     });
